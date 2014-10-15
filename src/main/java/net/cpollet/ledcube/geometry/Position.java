@@ -14,34 +14,43 @@
  * limitations under the License.
  */
 
-package net.cpollet.ledcube.effects;
-
-import net.cpollet.ledcube.CubeScene;
+package net.cpollet.ledcube.geometry;
 
 /**
  * @author Christophe Pollet
  */
-public class Random extends BaseEffect {
-	private CubeScene scene;
+public class Position {
+	private float x;
+	private float y;
+	private float z;
 
-	public Random(CubeScene scene) {
-		this.scene = scene;
+	public Position(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
-	@Override
-	public void step() {
-		boolean[][][] buffer = new boolean[8][8][8];
+	public float getX() {
+		return x;
+	}
 
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				for (int k = 0; k < 8; k++) {
-					buffer[i][j][k] = Math.random() > 0.8d;
-				}
-			}
-		}
+	public void setX(float x) {
+		this.x = x;
+	}
 
-		scene.setBuffer(buffer);
+	public float getY() {
+		return y;
+	}
 
-		sleep(500);
+	public void setY(float y) {
+		this.y = y;
+	}
+
+	public float getZ() {
+		return z;
+	}
+
+	public void setZ(float z) {
+		this.z = z;
 	}
 }

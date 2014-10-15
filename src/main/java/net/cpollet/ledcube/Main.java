@@ -18,6 +18,7 @@ package net.cpollet.ledcube;
 
 
 import com.jogamp.opengl.util.FPSAnimator;
+import net.cpollet.ledcube.effects.Effect;
 import net.cpollet.ledcube.effects.Rain;
 
 import javax.media.opengl.GLCapabilities;
@@ -27,8 +28,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -36,16 +35,20 @@ import java.awt.event.WindowEvent;
  * @author Christophe Pollet
  */
 public class Main {
-	// Define constants for the top-level container
-	private static String TITLE = "LED-cube sim";  // window's title
-	private static final int CANVAS_WIDTH = 800;  // width of the drawable
-	private static final int CANVAS_HEIGHT = 600; // height of the drawable
-	private static final int FPS = 60; // animator's target frames per second
+	private static String TITLE = "LED-cube sim";
+	private static final int CANVAS_WIDTH = 1024;
+	private static final int CANVAS_HEIGHT = 768;
+	private static final int FPS = 60;
 
-	public static void main(String[] args) {
-		final CubeScene scene = new CubeScene();
+	private static final int SIZE = 8;
 
-		new Thread(new Rain(scene)).start();
+	public static void main(String[] args) throws InterruptedException {
+		final CubeScene scene = new CubeScene(SIZE);
+
+		final Effect effect = new Rain(scene)//
+				.withSpeed(100)//
+				.withCubeSize(SIZE)//
+				.start();
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -59,17 +62,28 @@ public class Main {
 
 				canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
 				canvas.addGLEventListener(scene);
-				canvas.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						scene.toggleRotation();
-					}
-				});
 				canvas.addKeyListener(new KeyAdapter() {
 					@Override
 					public void keyPressed(KeyEvent e) {
-						if (e.getKeyChar() == ' ') {
-							scene.toggleRotation();
+						switch (e.getKeyChar()) {
+							case ' ':
+								scene.toggleRotation();
+								break;
+							case 'g':
+								scene.toggleAxis();
+								break;
+							case 's':
+								effect.stop();
+								break;
+							case 'r':
+								effect.start();
+								break;
+							case 'p':
+								effect.togglePause();
+								break;
+							case 'n':
+								effect.next();
+								break;	
 						}
 					}
 				});

@@ -14,34 +14,13 @@
  * limitations under the License.
  */
 
-package net.cpollet.ledcube.effects;
+package net.cpollet.ledcube.geometry;
 
-import net.cpollet.ledcube.CubeScene;
+import javax.media.opengl.GL2;
 
 /**
  * @author Christophe Pollet
  */
-public class Random extends BaseEffect {
-	private CubeScene scene;
-
-	public Random(CubeScene scene) {
-		this.scene = scene;
-	}
-
-	@Override
-	public void step() {
-		boolean[][][] buffer = new boolean[8][8][8];
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				for (int k = 0; k < 8; k++) {
-					buffer[i][j][k] = Math.random() > 0.8d;
-				}
-			}
-		}
-
-		scene.setBuffer(buffer);
-
-		sleep(500);
-	}
+public interface Shape {
+	public void draw(GL2 gl);
 }

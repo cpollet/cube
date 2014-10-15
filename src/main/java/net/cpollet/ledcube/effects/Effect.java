@@ -16,32 +16,15 @@
 
 package net.cpollet.ledcube.effects;
 
-import net.cpollet.ledcube.CubeScene;
-
 /**
  * @author Christophe Pollet
  */
-public class Random extends BaseEffect {
-	private CubeScene scene;
+public interface Effect extends Runnable {
+	Effect start();
 
-	public Random(CubeScene scene) {
-		this.scene = scene;
-	}
+	Effect stop();
 
-	@Override
-	public void step() {
-		boolean[][][] buffer = new boolean[8][8][8];
+	Effect togglePause();
 
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				for (int k = 0; k < 8; k++) {
-					buffer[i][j][k] = Math.random() > 0.8d;
-				}
-			}
-		}
-
-		scene.setBuffer(buffer);
-
-		sleep(500);
-	}
+	Effect next();
 }

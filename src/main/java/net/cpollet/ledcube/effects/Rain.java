@@ -21,50 +21,57 @@ import net.cpollet.ledcube.CubeScene;
 /**
  * @author Christophe Pollet
  */
-public class Rain implements Runnable {
+public class Rain extends BaseEffect {
 	private final CubeScene scene;
+	private long speed = 100;
+	private int cubeSize = 8;
+
+	private boolean[][][] buffer;
 
 	public Rain(CubeScene scene) {
 		this.scene = scene;
 	}
 
-	@SuppressWarnings("InfiniteLoopStatement")
-	@Override
-	public void run() {
-		boolean[][][] buffer = new boolean[8][8][8];
+	public Rain withSpeed(long speed) {
+		this.speed = speed;
+		return this;
+	}
+
+	public Rain withCubeSize(int cubeSize) {
+		this.cubeSize = cubeSize;
+		return this;
+	}
+
+	void init() {
+		buffer = new boolean[cubeSize][cubeSize][cubeSize];
 
 		initDrops(buffer);
 		scene.setBuffer(buffer);
+	}
 
-		while (true) {
-			for (int i = 0; i < 8; i++) {
-				for (int k = 0; k < 8; k++) {
-					for (int j = 0; j < 7; j++) {
-						buffer[i][j][k] = buffer[i][j + 1][k];
-					}
-					buffer[i][7][k] = false;
+	public void step() {
+		for (int i = 0; i < cubeSize; i++) {
+			for (int k = 0; k < cubeSize; k++) {
+				for (int j = 0; j < cubeSize - 1; j++) {
+					buffer[i][j][k] = buffer[i][j + 1][k];
 				}
-			}
-			initDrops(buffer);
-
-			scene.setBuffer(buffer);
-
-			try {
-				Thread.sleep(60);
-			}
-			catch (InterruptedException e) {
-				throw new RuntimeException(e);
+				buffer[i][cubeSize - 1][k] = false;
 			}
 		}
+		initDrops(buffer);
+
+		scene.setBuffer(buffer);
+
+		sleep(speed);
 	}
 
 	private void initDrops(boolean[][][] buffer) {
 		long drops = Math.round(Math.random() * 3);
 		for (int i = 0; i < drops; i++) {
-			int x = (int) Math.floor(Math.random() * 8);
-			int z = (int) Math.floor(Math.random() * 8);
+			int x = (int) Math.floor(Math.random() * cubeSize);
+			int z = (int) Math.floor(Math.random() * cubeSize);
 
-			buffer[x][7][z] = true;
+			buffer[x][cubeSize - 1][z] = true;
 		}
 	}
 }
