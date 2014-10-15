@@ -164,4 +164,8 @@ public class CubeScene implements GLEventListener {
 	public void toggleAxis() {
 		axisEnabled = !axisEnabled;
 	}
+
+	public int getSize() {
+		return size;
+	}
 }

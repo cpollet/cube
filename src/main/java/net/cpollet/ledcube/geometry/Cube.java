@@ -47,8 +47,9 @@ public class Cube implements Shape {
 
 		gl.glBegin(GL_QUADS);
 
-		// front
 		gl.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+
+		// front
 		gl.glVertex3f(hx, hy, hz);
 		gl.glVertex3f(hx, ly, hz);
 		gl.glVertex3f(lx, ly, hz);

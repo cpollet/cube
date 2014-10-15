@@ -22,25 +22,21 @@ import net.cpollet.ledcube.CubeScene;
  * @author Christophe Pollet
  */
 public class Random extends BaseEffect {
-	private CubeScene scene;
-
 	public Random(CubeScene scene) {
-		this.scene = scene;
+		super(scene);
 	}
 
 	@Override
 	public void step() {
-		boolean[][][] buffer = new boolean[8][8][8];
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				for (int k = 0; k < 8; k++) {
-					buffer[i][j][k] = Math.random() > 0.8d;
+		for (int i = 0; i < cubeSize(); i++) {
+			for (int j = 0; j < cubeSize(); j++) {
+				for (int k = 0; k < cubeSize(); k++) {
+					setState(i, j, k, Math.random() > 0.9d);
 				}
 			}
 		}
 
-		scene.setBuffer(buffer);
+		updateScene();
 
 		sleep(500);
 	}

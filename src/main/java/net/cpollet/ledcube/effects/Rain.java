@@ -22,14 +22,10 @@ import net.cpollet.ledcube.CubeScene;
  * @author Christophe Pollet
  */
 public class Rain extends BaseEffect {
-	private final CubeScene scene;
 	private long speed = 100;
-	private int cubeSize = 8;
 
-	private boolean[][][] buffer;
-
-	public Rain(CubeScene scene) {
-		this.scene = scene;
+	public Rain(CubeScene cubeScene) {
+		super(cubeScene);
 	}
 
 	public Rain withSpeed(long speed) {
@@ -37,41 +33,34 @@ public class Rain extends BaseEffect {
 		return this;
 	}
 
-	public Rain withCubeSize(int cubeSize) {
-		this.cubeSize = cubeSize;
-		return this;
-	}
-
 	void init() {
-		buffer = new boolean[cubeSize][cubeSize][cubeSize];
-
-		initDrops(buffer);
-		scene.setBuffer(buffer);
+		initDrops();
+		updateScene();
 	}
 
 	public void step() {
-		for (int i = 0; i < cubeSize; i++) {
-			for (int k = 0; k < cubeSize; k++) {
-				for (int j = 0; j < cubeSize - 1; j++) {
-					buffer[i][j][k] = buffer[i][j + 1][k];
+		for (int i = 0; i < cubeSize(); i++) {
+			for (int k = 0; k < cubeSize(); k++) {
+				for (int j = 0; j < cubeSize() - 1; j++) {
+					copyState(i, j + 1, k, i, j, k);
 				}
-				buffer[i][cubeSize - 1][k] = false;
+				turnOff(i, cubeSize() - 1, k);
 			}
 		}
-		initDrops(buffer);
+		initDrops();
 
-		scene.setBuffer(buffer);
+		updateScene();
 
 		sleep(speed);
 	}
 
-	private void initDrops(boolean[][][] buffer) {
+	private void initDrops() {
 		long drops = Math.round(Math.random() * 3);
 		for (int i = 0; i < drops; i++) {
-			int x = (int) Math.floor(Math.random() * cubeSize);
-			int z = (int) Math.floor(Math.random() * cubeSize);
+			int x = (int) Math.floor(Math.random() * cubeSize());
+			int z = (int) Math.floor(Math.random() * cubeSize());
 
-			buffer[x][cubeSize - 1][z] = true;
+			turnOn(x, cubeSize() - 1, z);
 		}
 	}
 }

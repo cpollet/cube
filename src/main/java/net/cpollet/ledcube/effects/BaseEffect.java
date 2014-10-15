@@ -16,14 +16,27 @@
 
 package net.cpollet.ledcube.effects;
 
+import net.cpollet.ledcube.CubeScene;
+
 /**
  * @author Christophe Pollet
  */
 public abstract class BaseEffect implements Effect {
+	protected CubeScene scene;
+	protected boolean[][][] buffer;
+
 	private volatile boolean shouldStop;
 	private volatile boolean paused;
+	private volatile boolean executeOneStep;
+
 	private Thread thread;
-	private boolean executeOneStep;
+
+	protected BaseEffect(CubeScene cubeScene) {
+		this.scene = cubeScene;
+
+		int cubeSize = cubeSize();
+		buffer = new boolean[cubeSize][cubeSize][cubeSize];
+	}
 
 	@Override
 	public Effect start() {
@@ -68,17 +81,45 @@ public abstract class BaseEffect implements Effect {
 		}
 	}
 
-	void init() {
-		// empty
-	}
-
-	abstract void step();
-
 	@Override
 	public Effect next() {
 		executeOneStep = true;
 		return this;
 	}
+
+	int cubeSize() {
+		return scene.getSize();
+	}
+
+	void updateScene() {
+		scene.setBuffer(buffer);
+	}
+
+	void turnOn(int x, int y, int z) {
+		buffer[x][y][z] = true;
+	}
+
+	void turnOff(int x, int y, int z) {
+		buffer[x][y][z] = false;
+	}
+
+	boolean getState(int x, int y, int z) {
+		return buffer[x][y][z];
+	}
+
+	void setState(int x, int y, int z, boolean state) {
+		buffer[x][y][z] = state;
+	}
+
+	void copyState(int xFrom, int yFrom, int zFrom, int xTo, int yTo, int zTo) {
+		buffer[xTo][yTo][zTo] = buffer[xFrom][yFrom][zFrom];
+	}
+
+	void init() {
+		// empty
+	}
+
+	abstract void step();
 
 	void sleep(long millis) {
 		try {

@@ -47,7 +47,6 @@ public class Main {
 
 		final Effect effect = new Rain(scene)//
 				.withSpeed(100)//
-				.withCubeSize(SIZE)//
 				.start();
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -56,10 +55,7 @@ public class Main {
 				GLProfile glp = GLProfile.getDefault();
 				GLCapabilities caps = new GLCapabilities(glp);
 
-				GLCanvas canvas = new GLCanvas(caps);
-				final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
-				animator.start();
-
+				final GLCanvas canvas = new GLCanvas(caps);
 				canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
 				canvas.addGLEventListener(scene);
 				canvas.addKeyListener(new KeyAdapter() {
@@ -83,16 +79,24 @@ public class Main {
 								break;
 							case 'n':
 								effect.next();
-								break;	
+								break;
 						}
 					}
 				});
+
+				final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
+				animator.start();
 
 				Frame frame = new Frame(TITLE);
 				frame.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
 				frame.add(canvas);
 				frame.setVisible(true);
 				frame.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowOpened(WindowEvent e) {
+						canvas.requestFocus();
+					}
+
 					public void windowClosing(WindowEvent e) {
 						new Thread() {
 							@Override
