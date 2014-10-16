@@ -45,14 +45,19 @@ import static javax.media.opengl.GL2.GL_SMOOTH;
  */
 public class CubeScene implements GLEventListener {
 	private final static Color COLOR_ON = new Color(.6f, .7f, 1f);
-	private final static Color COLOR_OFF = new Color(.2f, .2f, .2f, .5f);
+	private final static Color COLOR_OFF = new Color(.2f, .2f, .2f, .3f);
 	private final static float speedCube = -0.2f;
 
 	private GLU glu;
-	private float angleCube = 0;
-	private boolean rotationEnabled;
+
 	private boolean[][][] buffer;
 	private boolean axisEnabled;
+
+	private float angleX = 0;
+	private float angleY = 0;
+	private float angleZ = 0;
+	private float angleCube = 0;
+	private boolean rotationEnabled;
 
 	private int size;
 
@@ -71,10 +76,11 @@ public class CubeScene implements GLEventListener {
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		gl.glClearDepth(1f);
 		gl.glEnable(GL_DEPTH_TEST);
-		gl.glEnable(GL_BLEND);
 		gl.glDepthFunc(GL_LEQUAL);
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		gl.glShadeModel(GL_SMOOTH);
+
+		gl.glEnable(GL_BLEND);
 		gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -94,7 +100,11 @@ public class CubeScene implements GLEventListener {
 
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, 0.0f, -20.0f);
+
 		gl.glRotatef(angleCube, 1.0f, 1.0f, 1.0f);
+		gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+		gl.glRotatef(angleY, 0.0f, 1.0f, 0.0f);
+		gl.glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -153,19 +163,39 @@ public class CubeScene implements GLEventListener {
 		gl.glLoadIdentity();
 	}
 
-	public void toggleRotation() {
-		rotationEnabled = !rotationEnabled;
-	}
 
 	public void setBuffer(boolean[][][] buffer) {
 		this.buffer = buffer;
+	}
+
+	public int getSize() {
+		return size;
 	}
 
 	public void toggleAxis() {
 		axisEnabled = !axisEnabled;
 	}
 
-	public int getSize() {
-		return size;
+	public void toggleRotation() {
+		rotationEnabled = !rotationEnabled;
+	}
+
+	public void incrementXAngleBy(float angle) {
+		angleX += angle;
+	}
+
+	public void incrementYAngleBy(float angle) {
+		angleY += angle;
+	}
+
+	public void incrementZAngleBy(float angle) {
+		angleZ += angle;
+	}
+
+	public void resetAngles() {
+		angleX = 0f;
+		angleY = 0f;
+		angleZ = 0f;
+		angleCube = 0f;
 	}
 }

@@ -34,6 +34,7 @@ public class Rain extends BaseEffect {
 	}
 
 	void init() {
+		super.init();
 		initDrops();
 		updateScene();
 	}

@@ -35,7 +35,6 @@ public abstract class BaseEffect implements Effect {
 		this.scene = cubeScene;
 
 		int cubeSize = cubeSize();
-		buffer = new boolean[cubeSize][cubeSize][cubeSize];
 	}
 
 	@Override
@@ -116,7 +115,7 @@ public abstract class BaseEffect implements Effect {
 	}
 
 	void init() {
-		// empty
+		buffer = new boolean[cubeSize()][cubeSize()][cubeSize()];
 	}
 
 	abstract void step();

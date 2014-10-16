@@ -80,6 +80,27 @@ public class Main {
 							case 'n':
 								effect.next();
 								break;
+							case '0':
+								scene.resetAngles();
+								break;
+							case 'X':
+								scene.incrementXAngleBy(1.0f);
+								break;
+							case 'x':
+								scene.incrementXAngleBy(-1.0f);
+								break;
+							case 'Y':
+								scene.incrementYAngleBy(1.0f);
+								break;
+							case 'y':
+								scene.incrementYAngleBy(-1.0f);
+								break;
+							case 'Z':
+								scene.incrementZAngleBy(1.0f);
+								break;
+							case 'z':
+								scene.incrementZAngleBy(-1.0f);
+								break;
 						}
 					}
 				});
