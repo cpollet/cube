@@ -31,6 +31,9 @@ public abstract class BaseEffect implements Effect {
 
 	private Thread thread;
 
+	private long lastTime;
+	private int nbFrames;
+
 	protected BaseEffect(CubeScene cubeScene) {
 		this.scene = cubeScene;
 
@@ -45,6 +48,9 @@ public abstract class BaseEffect implements Effect {
 
 		shouldStop = false;
 		paused = false;
+
+		lastTime = System.currentTimeMillis();
+		nbFrames = 0;
 
 		thread = new Thread(this);
 		thread.start();
@@ -75,9 +81,24 @@ public abstract class BaseEffect implements Effect {
 		while (!shouldStop) {
 			if (!paused || executeOneStep) {
 				step();
+				updateScene();
 				executeOneStep = false;
+				updateFPS();
 			}
 		}
+	}
+
+	private void updateFPS() {
+		long currentTime = System.currentTimeMillis();
+
+		if (currentTime - lastTime < 1000) {
+			nbFrames++;
+			return;
+		}
+
+		scene.setEffectFps(nbFrames);
+		nbFrames = 0;
+		lastTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -128,5 +149,4 @@ public abstract class BaseEffect implements Effect {
 			throw new RuntimeException(e);
 		}
 	}
-
 }

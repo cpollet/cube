@@ -50,8 +50,6 @@ public class Rain extends BaseEffect {
 		}
 		initDrops();
 
-		updateScene();
-
 		sleep(speed);
 	}
 

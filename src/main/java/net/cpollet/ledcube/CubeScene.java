@@ -16,6 +16,7 @@
 
 package net.cpollet.ledcube;
 
+import com.jogamp.opengl.util.awt.TextRenderer;
 import net.cpollet.ledcube.geometry.Color;
 import net.cpollet.ledcube.geometry.Cube;
 import net.cpollet.ledcube.geometry.Position;
@@ -24,6 +25,8 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import java.awt.Font;
+import java.util.concurrent.CountDownLatch;
 
 import static javax.media.opengl.GL.GL_BLEND;
 import static javax.media.opengl.GL.GL_DEPTH_TEST;
@@ -51,17 +54,29 @@ public class CubeScene implements GLEventListener {
 	private GLU glu;
 
 	private boolean[][][] buffer;
-	private boolean axisEnabled;
 
-	private float angleX = 0;
-	private float angleY = 0;
-	private float angleZ = 0;
-	private float angleCube = 0;
+	private float angleX = 0.0f;
+	private float angleY = 0.0f;
+	private float angleZ = 0.0f;
+	private float positionZ = -20.0f;
+	private float angleCube = 0.0f;
 	private boolean rotationEnabled;
 
+	private boolean axisEnabled;
+	private boolean fpsEnabled;
+
 	private int size;
+	private TextRenderer textRenderer;
+
+	private int effectFps;
+	private int fps;
+	private long lastTime;
+	private int nbFrames;
+
+	private CountDownLatch countDownLatch;
 
 	public CubeScene(int size) {
+		this.countDownLatch = new CountDownLatch(1);
 		this.size = size;
 	}
 
@@ -69,6 +84,7 @@ public class CubeScene implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		rotationEnabled = true;
 		axisEnabled = false;
+		fpsEnabled = false;
 
 		glu = new GLU();
 
@@ -82,15 +98,22 @@ public class CubeScene implements GLEventListener {
 
 		gl.glEnable(GL_BLEND);
 		gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		textRenderer = new TextRenderer(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+
+		lastTime = System.currentTimeMillis();
+		nbFrames = 0;
+		fps = 0;
 	}
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
-
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		startFrame();
+
 		if (buffer == null) {
 			return;
 		}
@@ -99,7 +122,7 @@ public class CubeScene implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -20.0f);
+		gl.glTranslatef(0.0f, 0.0f, positionZ);
 
 		gl.glRotatef(angleCube, 1.0f, 1.0f, 1.0f);
 		gl.glRotatef(angleX, 1.0f, 0.0f, 0.0f);
@@ -126,6 +149,44 @@ public class CubeScene implements GLEventListener {
 		if (rotationEnabled) {
 			angleCube += speedCube;
 		}
+
+		updateFPS();
+		displayFPS(drawable);
+	}
+
+	private void startFrame() {
+		countDownLatch.countDown();
+	}
+
+	private void updateFPS() {
+		long currentTime = System.currentTimeMillis();
+
+		if (currentTime - lastTime < 1000) {
+			nbFrames++;
+			return;
+		}
+
+		fps = nbFrames;
+		nbFrames = 0;
+		lastTime = System.currentTimeMillis();
+	}
+
+	private void displayFPS(GLAutoDrawable drawable) {
+		if (fpsEnabled) {
+			if (fps > 0) {
+				textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+				textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+				textRenderer.draw("scene: " + String.valueOf(1000 / fps) + "ms (" + fps + "fps)", 10, 10);
+				textRenderer.endRendering();
+			}
+			if (effectFps > 0) {
+				textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+				textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+				textRenderer.draw("effect: " + String.valueOf(1000 / effectFps) + "ms (" + effectFps + "fps)", 10, 20);
+				textRenderer.endRendering();
+			}
+		}
+
 	}
 
 	private void drawAxes(GL2 gl) {
@@ -157,15 +218,25 @@ public class CubeScene implements GLEventListener {
 
 		gl.glMatrixMode(GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0, aspect, 0.1, 100.0);
+		glu.gluPerspective(40.0, aspect, 0.1, 100.0);
 
 		gl.glMatrixMode(GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
 
-
 	public void setBuffer(boolean[][][] buffer) {
+		waitNextFrame();
 		this.buffer = buffer;
+	}
+
+	private void waitNextFrame() {
+		try {
+			countDownLatch.await();
+			countDownLatch = new CountDownLatch(1);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int getSize() {
@@ -197,5 +268,17 @@ public class CubeScene implements GLEventListener {
 		angleY = 0f;
 		angleZ = 0f;
 		angleCube = 0f;
+	}
+
+	public void toggleFps() {
+		fpsEnabled = !fpsEnabled;
+	}
+
+	public void incrementZPosition(float position) {
+		positionZ += position;
+	}
+
+	public void setEffectFps(int effectFps) {
+		this.effectFps = effectFps;
 	}
 }

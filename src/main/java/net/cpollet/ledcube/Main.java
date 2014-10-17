@@ -71,7 +71,7 @@ public class Main {
 							case 's':
 								effect.stop();
 								break;
-							case 'r':
+							case 'S':
 								effect.start();
 								break;
 							case 'p':
@@ -100,6 +100,15 @@ public class Main {
 								break;
 							case 'z':
 								scene.incrementZAngleBy(-1.0f);
+								break;
+							case 'f':
+								scene.toggleFps();
+								break;
+							case 'w':
+								scene.incrementZPosition(-1.0f);
+								break;
+							case 'W':
+								scene.incrementZPosition(1.0f);
 								break;
 						}
 					}
