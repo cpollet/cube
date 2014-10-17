@@ -48,7 +48,7 @@ import static javax.media.opengl.GL2.GL_SMOOTH;
  */
 public class CubeScene implements GLEventListener {
 	private final static Color COLOR_ON = new Color(.6f, .7f, 1f);
-	private final static Color COLOR_OFF = new Color(.2f, .2f, .2f, .3f);
+	private final static Color COLOR_OFF = new Color(.3f, .3f, .3f, .2f);
 	private final static float speedCube = -0.2f;
 
 	private GLU glu;
@@ -99,7 +99,7 @@ public class CubeScene implements GLEventListener {
 		gl.glEnable(GL_BLEND);
 		gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		textRenderer = new TextRenderer(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+		textRenderer = new TextRenderer(new Font(Font.MONOSPACED, Font.PLAIN, 10));
 
 		lastTime = System.currentTimeMillis();
 		nbFrames = 0;
@@ -176,13 +176,13 @@ public class CubeScene implements GLEventListener {
 			if (fps > 0) {
 				textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
 				textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-				textRenderer.draw("scene: " + String.valueOf(1000 / fps) + "ms (" + fps + "fps)", 10, 10);
+				textRenderer.draw("scene  " + String.valueOf(1000 / fps) + "ms (" + fps + "fps)", 10, 10);
 				textRenderer.endRendering();
 			}
 			if (effectFps > 0) {
 				textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
 				textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-				textRenderer.draw("effect: " + String.valueOf(1000 / effectFps) + "ms (" + effectFps + "fps)", 10, 20);
+				textRenderer.draw("effect " + String.valueOf(1000 / effectFps) + "ms (" + effectFps + "fps)", 10, 20);
 				textRenderer.endRendering();
 			}
 		}

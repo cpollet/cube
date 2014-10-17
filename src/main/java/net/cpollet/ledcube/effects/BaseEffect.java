@@ -36,8 +36,6 @@ public abstract class BaseEffect implements Effect {
 
 	protected BaseEffect(CubeScene cubeScene) {
 		this.scene = cubeScene;
-
-		int cubeSize = cubeSize();
 	}
 
 	@Override
